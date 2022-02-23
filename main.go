@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	a := algorithm.LengthOfLongestSubstring("dvdf")
+	a := algorithm.FindMedianSortedArrays([]int{1, 3}, []int{2, 4})
 	fmt.Println(a)
 }
 

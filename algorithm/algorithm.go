@@ -1,5 +1,9 @@
 package algorithm
 
+import (
+	"sort"
+)
+
 //链表结构体
 type ListNode struct {
 	Val  int
@@ -96,4 +100,19 @@ func LengthOfLongestSubstring(s string) int {
 		max = len(a)
 	}
 	return max
+}
+
+// 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
+// 算法的时间复杂度应该为 O(log (m+n)) 。
+// 输入：nums1 = [1,2], nums2 = [3,4]
+// 输出：2.50000
+func FindMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	a := append(nums1, nums2...)
+	sort.Ints(a)
+	l := len(a)
+	if l%2 == 1 {
+		return float64(a[l/2])
+	} else {
+		return float64(a[l/2-1]+a[l/2]) / 2.000
+	}
 }
