@@ -63,7 +63,7 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 // 输出: 3
 func LengthOfLongestSubstring(s string) int {
 	l := len(s)
-	max, slow, count := 0, -1, 0
+	max, slow := 0, -1
 	a := map[byte]int{}
 	// for i := 0; i < l; i++ {
 	// 	if k, ok := a[s[i]]; ok {
@@ -82,20 +82,18 @@ func LengthOfLongestSubstring(s string) int {
 	for i := 0; i < l; i++ {
 		in, ok := a[s[i]]
 		if ok {
-			if max < count {
-				max = count
+			if max < len(a) {
+				max = len(a)
 			}
 			for slow < in {
 				delete(a, s[slow+1])
 				slow++
-				count--
 			}
 		}
 		a[s[i]] = i
-		count++
 	}
-	if max < count {
-		max = count
+	if max < len(a) {
+		max = len(a)
 	}
 	return max
 }
