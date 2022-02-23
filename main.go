@@ -9,7 +9,8 @@ import (
 )
 
 func main() {
-	algorithm.TwoSum([]int{1, 2}, 3)
+	a := algorithm.LengthOfLongestSubstring("dvdf")
+	fmt.Println(a)
 }
 
 func test(g, e [4]int) string {
