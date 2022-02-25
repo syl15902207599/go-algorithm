@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	a := algorithm.FindMedianSortedArrays([]int{1, 3}, []int{2, 4})
+	a := algorithm.Reverse(1534236469)
 	fmt.Println(a)
 }
 

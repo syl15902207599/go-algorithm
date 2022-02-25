@@ -1,7 +1,9 @@
 package algorithm
 
 import (
+	"math"
 	"sort"
+	"strings"
 )
 
 //链表结构体
@@ -102,6 +104,7 @@ func LengthOfLongestSubstring(s string) int {
 	return max
 }
 
+// 寻找两个正序数组的中位数
 // 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
 // 算法的时间复杂度应该为 O(log (m+n)) 。
 // 输入：nums1 = [1,2], nums2 = [3,4]
@@ -115,4 +118,78 @@ func FindMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	} else {
 		return float64(a[l/2-1]+a[l/2]) / 2.000
 	}
+}
+
+// 最长回文子串
+// 给你一个字符串 s，找到 s 中最长的回文子串。
+// 输入：s = "babad"
+// 输出："bab"
+// 解释："aba" 同样是符合题意的答案。
+func LongestPalindrome(s string) string {
+	l := len(s)
+	long := ""
+	slow := 0
+	m := map[byte]int{}
+	for i := 0; i < l; i++ {
+		ind, ok := m[s[i]]
+		if ok {
+			for slow-1 < ind {
+				delete(m, s[slow])
+				slow++
+			}
+			if len(long) < i-slow+1 {
+				long = s[slow-1 : i+1]
+			}
+
+		}
+		m[s[i]] = i
+	}
+	if s[slow] == s[l-1] && len(long) < l-slow+1 {
+		long = s[slow-1:]
+	}
+	return long
+}
+
+// Z 字形变换
+// 输入：s = "PAYPALISHIRING", numRows = 4
+// 输出："PINALSIGYAHRPI"
+// 解释：
+// P     I    N
+// A   L S  I G
+// Y A   H R
+// P     I
+func Convert(s string, numRows int) string {
+	if numRows == 1 {
+		return s
+	}
+	arr := make([]string, numRows)
+	n := numRows*2 - 2
+	for k, v := range s {
+		x := k % n
+		arr[min(x, n-x)] += string(v)
+	}
+	return strings.Join(arr, "")
+}
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// 整数反转
+// 给你一个 32 位的有符号整数 x ，返回将 x 中的数字部分反转后的结果。
+// 如果反转后整数超过 32 位的有符号整数的范围 [−2^31,  2^31 − 1] ，就返回 0。
+// 输入：x = -123
+// 输出：-321
+func Reverse(x int) int {
+	res := 0
+	for x != 0 {
+		res = res*10 + x%10
+		x = x / 10
+	}
+	if res > math.MaxInt32 || res < math.MinInt32 {
+		return 0
+	}
+	return res
 }
