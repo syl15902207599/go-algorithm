@@ -193,3 +193,35 @@ func Reverse(x int) int {
 	}
 	return res
 }
+
+// 字符串转换整数 (atoi)
+// 输入：s = "   -42"
+// 输出：-42
+func MyAtoi(s string) int {
+	i, res, f, n := 0, 0, 1, len(s)
+	for i < n && s[i] == ' ' {
+		i++
+	}
+	//标记正负号
+	if i > n {
+		return 0
+	}
+	if s[i] == '-' {
+		f = -1
+		i++
+	} else if s[i] == '+' {
+		f = 1
+		i++
+	}
+	for i < n && s[i] >= '0' && s[i] <= '9' {
+		res = res*10 + int(s[i]-'0')
+		if f*res > math.MaxInt32 {
+			return math.MaxInt32
+		}
+		if f*res < math.MinInt32 {
+			return math.MinInt32
+		}
+		i++
+	}
+	return f * res
+}

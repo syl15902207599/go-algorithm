@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	a := algorithm.Reverse(1534236469)
+	a := algorithm.MyAtoi("")
 	fmt.Println(a)
 }
 
