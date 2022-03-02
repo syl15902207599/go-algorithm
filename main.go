@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	a := algorithm.ThreeSum([]int{-1, 0, 1, 2, -1, -4})
+	a := algorithm.ThreeSumClosest([]int{-1, 2, 1, -4}, 1)
 	fmt.Println(a)
 }
 

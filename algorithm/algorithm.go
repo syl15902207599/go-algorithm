@@ -369,26 +369,105 @@ func ThreeSum(nums []int) [][]int {
 	if len(nums) < 3 {
 		return [][]int{}
 	}
+	l := len(nums)
 	sort.Ints(nums)
-	i, j := 0, len(nums)-1
 	res := [][]int{}
-	for i < j {
-		if nums[i]+nums[i+1]+nums[j] > 0 {
-			j--
-		} else if nums[i]+nums[i+1]+nums[j] < 0 {
-			i++
-		} else {
-			res = append(res, []int{nums[i], nums[i+1], nums[j]})
-			i++
-			j--
-			for i < j && nums[i] == nums[i-1] {
-				i++
-			}
-			for i < j && nums[j] == nums[j+1] {
-				j--
-			}
-
+	for i := 0; i < l; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
 		}
+		left, right := i+1, l-1
+		for left < right {
+			val := nums[i] + nums[left] + nums[right]
+			if val > 0 {
+				right--
+			} else if val < 0 {
+				left++
+			} else {
+				res = append(res, []int{nums[i], nums[left], nums[right]})
+				left++
+				right--
+				for left < right && nums[left] == nums[left-1] {
+					left++
+				}
+				for left < right && nums[right] == nums[right+1] {
+					right--
+				}
+			}
+		}
+	}
+
+	return res
+}
+
+// 最接近的三数之和
+// 给你一个长度为 n 的整数数组 nums 和 一个目标值 target。请你从 nums 中选出三个整数，使它们的和与 target 最接近。
+// 返回这三个数的和。
+// 假定每组输入只存在恰好一个解。
+// 输入：nums = [-1,2,1,-4], target = 1
+// 输出：2
+func ThreeSumClosest(nums []int, target int) int {
+	if len(nums) < 3 {
+		return 0
+	}
+	l := len(nums)
+	sort.Ints(nums)
+	min, dif := 0, math.MaxInt32
+	for i := 0; i < l; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		left, right := i+1, l-1
+		for left < right {
+			val := nums[i] + nums[left] + nums[right]
+			if val > target {
+				if dif > val-target {
+					min = val
+					dif = val - target
+				}
+				right--
+			} else if val < target {
+				if dif > target-val {
+					min = val
+					dif = target - val
+				}
+				left++
+			} else {
+				return val
+			}
+		}
+	}
+	return min
+}
+
+// 电话号码的字母组合
+// 给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。
+// 输入：digits = "23"
+// 输出：["ad","ae","af","bd","be","bf","cd","ce","cf"]
+func LetterCombinations(digits string) []string {
+	m := map[rune][]string{
+		'2': {"a", "b", "c"},
+		'3': {"d", "e", "f"},
+		'4': {"g", "h", "i"},
+		'5': {"j", "k", "l"},
+		'6': {"m", "n", "o"},
+		'7': {"p", "q", "r", "s"},
+		'8': {"t", "u", "v"},
+		'9': {"w", "x", "y", "z"},
+	}
+	res := []string{}
+	for _, v := range digits {
+		if len(res) == 0 {
+			res = m[v]
+			continue
+		}
+		tmp := make([]string, len(res)*len(m[v]))
+		for i := 0; i < len(res); i++ {
+			for j := 0; j < len(m[v]); j++ {
+				tmp[i*len(m[v])+j] = res[i] + m[v][j]
+			}
+		}
+		res = tmp
 	}
 	return res
 }
