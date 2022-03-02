@@ -3,6 +3,7 @@ package algorithm
 import (
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -36,7 +37,7 @@ func TwoSum(nums []int, target int) []int {
 // 你可以假设除了数字 0 之外，这两个数都不会以 0 开头。
 // 输入：l1 = [2,4,3], l2 = [5,6,4]
 // 输出：[7,0,8]
-func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+func AddTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	res := &ListNode{}
 	head := res
 	var v int
@@ -224,4 +225,170 @@ func MyAtoi(s string) int {
 		i++
 	}
 	return f * res
+}
+
+// 回文数
+// 输入：x = 121
+// 输出：true
+func IsPalindrome(x int) bool {
+	if x < 0 {
+		return false
+	}
+	s := strconv.Itoa(x)
+	a := 0
+	for i := 0; i < len(s)/2; i++ {
+		a = a*10 + x%10
+		x /= 10
+	}
+	if len(s)%2 == 1 {
+		return x/10 == a
+	} else {
+		return x == a
+	}
+}
+
+// 盛最多水的容器
+// 给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。
+// 找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+// 返回容器可以储存的最大水量。
+// 输入：[1,8,6,2,5,4,8,3,7]
+// 输出：49
+func MaxArea(height []int) int {
+	m, n := 0, len(height)-1
+	max := 0
+	for m != n {
+		if height[m] > height[n] {
+			if max < (n-m)*height[n] {
+				max = (n - m) * height[n]
+			}
+			n--
+		} else {
+			if max < (n-m)*height[m] {
+				max = (n - m) * height[m]
+			}
+			m++
+		}
+	}
+	return max
+}
+
+// 整数转罗马数字
+// 输入: num = 3
+// 输出: "III"
+func IntToRoman(num int) string {
+	m := map[int]string{
+		1:    "I",
+		5:    "V",
+		10:   "X",
+		50:   "L",
+		100:  "C",
+		500:  "D",
+		1000: "M",
+	}
+	a := []int{}
+	for num > 0 {
+		a = append(a, num%10)
+		num /= 10
+	}
+	s := ""
+	for k, v := range a {
+		b := int(math.Pow10(k))
+		one, five, ten := m[b], m[5*b], m[10*b]
+		switch v {
+		case 1:
+			s = one + s
+		case 2:
+			s = one + one + s
+		case 3:
+			s = one + one + one + s
+		case 4:
+			s = one + five + s
+		case 5:
+			s = five + s
+		case 6:
+			s = five + one + s
+		case 7:
+			s = five + one + one + s
+		case 8:
+			s = five + one + one + one + s
+		case 9:
+			s = one + ten + s
+		}
+	}
+	return s
+}
+
+// 罗马数字转整数
+// 输入: s = "IX"
+// 输出: 9
+func RomanToInt(s string) int {
+	m := map[byte]int{
+		'I': 1,
+		'V': 5,
+		'X': 10,
+		'L': 50,
+		'C': 100,
+		'D': 500,
+		'M': 1000,
+	}
+	res := 0
+	for i := 0; i < len(s)-1; i++ {
+		if m[s[i]] < m[s[i+1]] {
+			res -= m[s[i]]
+		} else {
+			res += m[s[i]]
+		}
+	}
+	return res + m[s[len(s)-1]]
+}
+
+// 最长公共前缀
+// 编写一个函数来查找字符串数组中的最长公共前缀。
+// 如果不存在公共前缀，返回空字符串 ""。
+// 输入：strs = ["flower","flow","flight"]
+// 输出："fl"
+func LongestCommonPrefix(strs []string) string {
+	if len(strs) == 0 {
+		return ""
+	}
+	for i := 0; i < len(strs[0]); i++ {
+		for j := 0; j < len(strs); j++ {
+			if i == len(strs[j]) || strs[0][i] != strs[j][i] {
+				return strs[0][0:i]
+			}
+		}
+	}
+	return strs[0]
+}
+
+// 三数之和
+// 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组。
+// 输入：nums = [-1,0,1,2,-1,-4]
+// 输出：[[-1,-1,2],[-1,0,1]]
+func ThreeSum(nums []int) [][]int {
+	if len(nums) < 3 {
+		return [][]int{}
+	}
+	sort.Ints(nums)
+	i, j := 0, len(nums)-1
+	res := [][]int{}
+	for i < j {
+		if nums[i]+nums[i+1]+nums[j] > 0 {
+			j--
+		} else if nums[i]+nums[i+1]+nums[j] < 0 {
+			i++
+		} else {
+			res = append(res, []int{nums[i], nums[i+1], nums[j]})
+			i++
+			j--
+			for i < j && nums[i] == nums[i-1] {
+				i++
+			}
+			for i < j && nums[j] == nums[j+1] {
+				j--
+			}
+
+		}
+	}
+	return res
 }
