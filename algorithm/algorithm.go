@@ -471,3 +471,258 @@ func LetterCombinations(digits string) []string {
 	}
 	return res
 }
+
+// 四数之和
+// 给你一个由 n 个整数组成的数组 nums ，和一个目标值 target 。请你找出并返回满足下述全部条件且不重复的四元组 [nums[a], nums[b], nums[c], nums[d]] （若两个四元组元素一一对应，则认为两个四元组重复）：
+// 0 <= a, b, c, d < n
+// a、b、c 和 d 互不相同
+// nums[a] + nums[b] + nums[c] + nums[d] == target
+// 你可以按 任意顺序 返回答案 。
+// 输入：nums = [1,0,-1,0,-2,2], target = 0
+// 输出：[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+func FourSum(nums []int, target int) [][]int {
+	n := len(nums)
+	answer := [][]int{}
+	if n < 4 {
+		return answer
+	}
+	sort.Ints(nums)
+	for i := 0; i < n-3 && nums[i]+nums[i+1]+nums[i+2]+nums[i+3] <= target; i++ {
+		if i > 0 && nums[i] == nums[i-1] || nums[i]+nums[n-3]+nums[n-2]+nums[n-1] < target {
+			continue
+		}
+		for j := i + 1; j < n-2 && nums[i]+nums[j]+nums[j+1]+nums[j+2] <= target; j++ {
+			if j > i+1 && nums[j] == nums[j-1] || nums[i]+nums[j]+nums[n-2]+nums[n-1] < target {
+				continue
+			}
+			left := j + 1
+			right := n - 1
+			for left < right {
+				value := nums[left] + nums[right] + nums[i] + nums[j]
+				if value < target {
+					left++
+				} else if value > target {
+					right--
+				} else {
+					answer = append(answer, []int{nums[j], nums[i], nums[left], nums[right]})
+
+					left++
+					right--
+					for left < right && nums[left] == nums[left-1] {
+						left++
+					}
+
+					for left < right && nums[right] == nums[right+1] {
+						right--
+					}
+				}
+			}
+		}
+	}
+	return answer
+}
+
+// 删除链表的倒数第 N 个结点
+// 给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+// 输入：head = [1,2,3,4,5], n = 2
+// 输出：[1,2,3,5]
+func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
+	list := head
+	arr := []*ListNode{}
+	for list != nil {
+		arr = append(arr, list)
+		list = list.Next
+	}
+	l := len(arr)
+	if l > n {
+		if l-n+1 >= l {
+			arr[len(arr)-n-1].Next = nil
+		} else {
+			arr[len(arr)-n-1].Next = arr[len(arr)-n+1]
+		}
+	} else if len(arr) == n {
+		head = head.Next
+	}
+	return head
+}
+
+// 有效的括号
+// 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串 s ，判断字符串是否有效。
+func IsValid(s string) bool {
+	arr := []rune{}
+	for _, v := range s {
+		switch v {
+		case ')':
+			if len(arr) > 0 && arr[len(arr)-1] == '(' {
+				arr = arr[:len(arr)-1]
+				continue
+			} else {
+				return false
+			}
+		case ']':
+			if len(arr) > 0 && arr[len(arr)-1] == '[' {
+				arr = arr[:len(arr)-1]
+				continue
+			} else {
+				return false
+			}
+		case '}':
+			if len(arr) > 0 && arr[len(arr)-1] == '{' {
+				arr = arr[:len(arr)-1]
+				continue
+			} else {
+				return false
+			}
+		}
+		arr = append(arr, v)
+	}
+	return len(arr) == 0
+}
+
+// 合并两个有序链表
+// 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
+// 输入：l1 = [1,2,4], l2 = [1,3,4]
+// 输出：[1,1,2,3,4,4]
+func MergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	res := &ListNode{}
+	head := res
+	for l1 != nil || l2 != nil {
+		if l1 == nil {
+			head.Next = l2
+			break
+		}
+		if l2 == nil {
+			head.Next = l1
+			break
+		}
+		if l1.Val > l2.Val {
+			head.Next = &ListNode{l2.Val, nil}
+			l2 = l2.Next
+		} else {
+			head.Next = &ListNode{l1.Val, nil}
+			l1 = l1.Next
+		}
+		head = head.Next
+	}
+	return res.Next
+}
+
+// 括号生成
+// 数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+func GenerateParenthesis(n int) []string {
+	res := []string{}
+	var fun func(s string, lNum, rNum int)
+	fun = func(s string, lNum, rNum int) {
+		if len(s) == 2*n {
+			res = append(res, s)
+			return
+		}
+		if lNum > 0 {
+			fun(s+"(", lNum-1, rNum)
+		}
+		if lNum < rNum {
+			fun(s+")", lNum, rNum-1)
+		}
+	}
+	fun("", n, n)
+	return res
+}
+
+// 合并K个升序链表
+// 给你一个链表数组，每个链表都已经按升序排列。
+// 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+// 输入：lists = [[1,4,5],[1,3,4],[2,6]]
+// 输出：[1,1,2,3,4,4,5,6]
+func MergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	arr := []int{}
+	for i := 0; i < len(lists); i++ {
+		for lists[i] != nil {
+			arr = append(arr, lists[i].Val)
+			lists[i] = lists[i].Next
+		}
+	}
+	sort.Ints(arr)
+	head := &ListNode{}
+	res := head
+	for i := 0; i < len(arr); i++ {
+		head.Next = &ListNode{arr[i], nil}
+		head = head.Next
+	}
+	return res.Next
+}
+
+// 两两交换链表中的节点
+// 给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
+// 输入：head = [1,2,3,4]
+// 输出：[2,1,4,3]
+func SwapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	res := head
+	for head != nil && head.Next != nil {
+		tmp := head.Val
+		head.Val = head.Next.Val
+		head.Next.Val = tmp
+		head = head.Next.Next
+	}
+	return res
+}
+
+// K 个一组翻转链表
+// 给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
+// k 是一个正整数，它的值小于或等于链表的长度。
+// 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+// 输入：head = [1,2,3,4,5], k = 3
+// 输出：[3,2,1,4,5]
+func ReverseKGroup(head *ListNode, k int) *ListNode {
+	a := []int{}
+	for head != nil {
+		a = append(a, head.Val)
+		head = head.Next
+	}
+	res := &ListNode{}
+	head = res
+	l := len(a)
+	for i := 0; i < l; i++ {
+		if l/k > i/k {
+			res.Next = &ListNode{a[i/k*k+k-i%k-1], nil}
+		} else {
+			res.Next = &ListNode{a[i], nil}
+		}
+		res = res.Next
+	}
+	return head.Next
+}
+func ReverseKGroup1(head *ListNode, k int) *ListNode {
+	res := &ListNode{Next: head}
+	pre := res
+	for pre != nil {
+		tail := pre.Next
+		for i := 0; i < k; i++ {
+			tail = pre.Next
+			if tail == nil {
+				return res.Next
+			}
+		}
+		next := tail.Next
+		head, tail = reverseList(head, tail)
+		pre = next
+		tail.Next = head
+	}
+	return res.Next
+}
+func reverseList(head, tail *ListNode) (*ListNode, *ListNode) {
+	prev := tail.Next
+	p := head
+	for prev != tail {
+		nex := p.Next
+		p.Next = prev
+		prev = p
+		p = nex
+	}
+	return tail, head
+}
