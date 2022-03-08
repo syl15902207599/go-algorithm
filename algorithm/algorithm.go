@@ -700,29 +700,47 @@ func ReverseKGroup(head *ListNode, k int) *ListNode {
 func ReverseKGroup1(head *ListNode, k int) *ListNode {
 	res := &ListNode{Next: head}
 	pre := res
-	for pre != nil {
-		tail := pre.Next
+	for head != nil {
+		tail := pre
 		for i := 0; i < k; i++ {
-			tail = pre.Next
+			tail = tail.Next
 			if tail == nil {
 				return res.Next
 			}
 		}
-		next := tail.Next
 		head, tail = reverseList(head, tail)
-		pre = next
-		tail.Next = head
+		pre.Next = head
+		pre = tail
+		head = tail.Next
 	}
 	return res.Next
 }
 func reverseList(head, tail *ListNode) (*ListNode, *ListNode) {
-	prev := tail.Next
-	p := head
-	for prev != tail {
-		nex := p.Next
-		p.Next = prev
-		prev = p
-		p = nex
+	tmp := head
+	for tmp != tail {
+		next := tmp.Next
+		tmp.Next = tail.Next
+		tail.Next = tmp
+		tmp = next
 	}
 	return tail, head
+}
+
+// 删除有序数组中的重复项(不用额外数组空间删除重复项)
+// 给你一个 升序排列 的数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次 ，返回删除后数组的新长度。元素的 相对顺序 应该保持 一致 。
+// 输入：nums = [1,1,2]
+// 输出：2, nums = [1,2,_]
+func RemoveDuplicates(nums []int) int {
+	l := len(nums)
+	if l <= 1 {
+		return l
+	}
+	j := 1
+	for i := 1; i < l-1; i++ {
+		if nums[i] != nums[i-1] {
+			nums[j] = nums[i]
+			j++
+		}
+	}
+	return j
 }
